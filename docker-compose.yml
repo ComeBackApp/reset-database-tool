@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  resetdb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "resetdb"
+    command: >
+      bash -c "nginx
+      && php artisan key:generate
+      && chmod -R 777 storage public bootstrap
+      && nginx -t
+      && php-fpm;"
+    volumes:
+      - .:/var/www/app
+      # - ./nginx/default.conf:/etc/nginx/sites-available/default
+      # Just specify a path and let the Engine create a volume.
+      # Data present in the base image at the specified mount point will be copied
+      # over to the new volume upon volume initialization.
+      # node_modules from this new volume will be used and not from your local dev env.
+      - /var/www/app/vendor
+    # command: "service nginx restart'"
+    # ports:
+    #   - "${APP_PORT}:80"
